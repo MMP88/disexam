@@ -20,6 +20,8 @@ public final class Config {
   private static String SOLR_PATH;
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
+  private static long USER_TTL;
+  private static long ORDER_TTL;
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -99,5 +101,15 @@ public final class Config {
     SOLR_PATH = json.get("SOLR_PATH").toString().replace("\"", "");
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
+    USER_TTL = json.get("USER_TTL").getAsLong();
+    ORDER_TTL = json.get("ORDER_TTL").getAsLong();
+  }
+
+    public static long getUserTtl() {
+        return USER_TTL;
+    }
+
+  public static long getOrderTtl() {
+    return ORDER_TTL;
   }
 }
