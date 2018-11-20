@@ -31,14 +31,22 @@ public class UserEndpoints {
     // Use the ID to get the user from the controller.
     User user = UserController.getUser(idUser);
 
-    // TODO: Add Encryption to JSON: FIXED
-    // Convert the user object to json in order to return the object
-    String json = new Gson().toJson(user);
-    json = Encryption.encryptDecryptXOR(json);
-
-    // Return the user with the status code 200
-    // TODO: What should happen if something breaks down?
-    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    try {
+      // TODO: Add Encryption to JSON: FIXED
+      // Convert the user object to json in order to return the object
+      String json = new Gson().toJson(user);
+      json = Encryption.encryptDecryptXOR(json);
+      if (user != null) {
+        // Return the user with the status code 200
+        // TODO: What should happen if something breaks down? :FIXED
+        return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+      } else {
+        return Response.status(400).entity("FEJLTEKST").build();
+      }
+    } catch (Exception e) {
+      e.getStackTrace();
+      return Response.status(500).entity("FEJLTEKST - INTERNAL ERROR").build();
+    }
   }
 
   /** @return Responses */
@@ -84,40 +92,58 @@ public class UserEndpoints {
     }
   }
 
-  // TODO: Make the system able to login users and assign them a token to use throughout the system.
+  // TODO: Make the system able to login users and assign them a token to use throughout the system. :FIXED
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response loginUser(String email) {
+  public Response loginUser(String body) {
 
     // Read the json from body and transfer it to a user class
-    User currentUser = new Gson().fromJson(email, User.class);
-    User databaseUser = UserController.getUserByEmail(currentUser.getEmail());
+    User user = new Gson().fromJson(body, User.class);
 
-    if(currentUser == databaseUser) {
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(databaseUser).build();
+    String token = UserController.getLogin(user);
+
+    if(token!= "") {
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(token).build();
     } else {
       // Return a response with status 200 and JSON as type
       return Response.status(400).entity("Endpoint not implemented yet").build();
     }
   }
 
-  // TODO: Make the system able to delete users
+  // TODO: Make the system able to delete users :FIXED
   @POST
-  @Path("/delete/{idUser}")
+  @Path("/delete")
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response deleteUser(@PathParam("idUser") int idUser) {
+  public Response deleteUser(String body) {
 
-    UserController.delete(idUser);
+    User user = new Gson().fromJson(body, User.class);
+    String token = UserController.getTokenVerification(user);
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    if (token != "") {
+      UserController.delete(user);
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User could not be deleted.").build();
+    } else {
+      // Return a response with status 200 and JSON as type
+      return Response.status(400).entity("Endpoint not implemented yet").build();
+    }
   }
 
-  // TODO: Make the system able to update users
-  public Response updateUser(String x) {
+  // TODO: Make the system able to update users :FIXED
+  @POST
+  @Path("/update")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response updateUser(String body) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    User user = new Gson().fromJson(body, User.class);
+    String token = UserController.getTokenVerification(user);
+
+    if (token != "") {
+      UserController.update(user);
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User could not be updated.").build();
+    } else {
+      // Return a response with status 200 and JSON as type
+      return Response.status(400).entity("Endpoint not implemented yet").build();
+    }
   }
 }
