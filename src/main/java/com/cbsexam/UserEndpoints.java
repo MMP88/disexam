@@ -4,11 +4,7 @@ import cache.UserCache;
 import com.google.gson.Gson;
 import controllers.UserController;
 import java.util.ArrayList;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
@@ -18,7 +14,7 @@ import utils.Log;
 @Path("user")
 public class UserEndpoints {
 
-  UserCache userCache = new UserCache();
+  public static UserCache userCache = new UserCache();
 
   /**
    * @param idUser
@@ -70,7 +66,7 @@ public class UserEndpoints {
   }
 
   @POST
-  @Path("/")
+  @Path("/createUser")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createUser(String body) {
 
@@ -112,7 +108,7 @@ public class UserEndpoints {
   }
 
   // TODO: Make the system able to delete users :FIXED
-  @POST
+  @DELETE
   @Path("/delete")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response deleteUser(String body) {
@@ -124,7 +120,7 @@ public class UserEndpoints {
       UserController.delete(user);
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity("User could not be deleted.").build();
     } else {
-      // Return a response with status 200 and JSON as type
+      // Return a response with status 400
       return Response.status(400).entity("Endpoint not implemented yet").build();
     }
   }

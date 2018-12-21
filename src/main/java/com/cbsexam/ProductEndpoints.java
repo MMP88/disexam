@@ -17,7 +17,7 @@ import utils.Encryption;
 @Path("product")
 public class ProductEndpoints {
 
-  ProductCache productCache = new ProductCache();
+  public static ProductCache productCache = new ProductCache();
 
   /**
    * @param idProduct
@@ -53,11 +53,11 @@ public class ProductEndpoints {
     json = Encryption.encryptDecryptXOR(json);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
+    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
 
   @POST
-  @Path("/")
+  @Path("/createProducts")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response createProduct(String body) {
 

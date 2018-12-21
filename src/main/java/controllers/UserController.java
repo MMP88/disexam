@@ -13,6 +13,7 @@ import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.cbsexam.UserEndpoints;
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -71,7 +72,7 @@ public class UserController {
     }
 
     // Build the query for DB
-    String sql = "SELECT * FROM user where email= '" + user.getEmail() + "' AND (password= '" + Hashing.shaSalt(user.getPassword() + "' OR password= '") + user.getPassword() + "')";
+    String sql = "SELECT * FROM user where email= '" + user.getEmail() + "' AND (password= '" + Hashing.shaSalt(user.getPassword()) + "' OR password= '" + user.getPassword() + "')";
 
     // Actually do the query
     ResultSet rs = dbCon.query(sql);
@@ -91,7 +92,7 @@ public class UserController {
         if (userLogin != null) {
           try {
             Date expire = new Date();
-            expire.setTime(System.currentTimeMillis() + 10000);
+            expire.setTime(System.currentTimeMillis() + 1000000000L);
             Algorithm algorithm = Algorithm.HMAC256("secret");
             token = JWT.create()
                     .withClaim("userID", user.getId())
@@ -192,6 +193,8 @@ public class UserController {
       return null;
     }
 
+    UserEndpoints.userCache.getUsers(true);
+
     // Return user
     return user;
   }
@@ -286,7 +289,7 @@ public class UserController {
       }
 
       // Return null
-      return "";
+      return token;
     }
 
 }

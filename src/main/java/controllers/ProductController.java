@@ -3,6 +3,8 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.cbsexam.ProductEndpoints;
 import model.Product;
 import utils.Log;
 
@@ -97,7 +99,7 @@ public class ProductController {
       dbCon = new DatabaseController();
     }
 
-    // TODO: Use caching layer.
+    // TODO: Use caching layer. :FIXED
     String sql = "SELECT * FROM product";
 
     ResultSet rs = dbCon.query(sql);
@@ -159,6 +161,7 @@ public class ProductController {
       // Return null if product has not been inserted into database
       return null;
     }
+    ProductEndpoints.productCache.getProducts(true);
 
     // Return product
     return product;

@@ -38,7 +38,7 @@ public final class Hashing {
   }
 
   public static String shaSalt(String str) {
-    String salt = "vjhvjh85857fvjgvfh";
+    String salt = Config.getSALT();
     String saltedPassword = str + salt;
 
     return sha(saltedPassword);
